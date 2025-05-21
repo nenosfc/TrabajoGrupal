@@ -7,8 +7,13 @@ public class Alumno {
     private String email;
     private String telefono;
     private String direccion;
+    private double notaTrimestre1;
+    private double notaTrimestre2;
+    private double notaTrimestre3;
 
-    public Alumno(int id_alumno,String nombre, String apellido, String fechaNacimiento, String email, String telefono, String direccion) {
+
+    public Alumno(int id_alumno,String nombre, String apellido, String fechaNacimiento,
+                  String email, String telefono, String direccion) {
         this.id_alumno = id_alumno;
         this.nombre = nombre;
         this.apellido = apellido;
@@ -16,6 +21,10 @@ public class Alumno {
         this.email = email;
         this.telefono = telefono;
         this.direccion = direccion;
+        this.notaTrimestre1 =notaTrimestre1 ;
+        this.notaTrimestre2 = notaTrimestre2;
+        this.notaTrimestre3 = notaTrimestre3;
+
     }
 
     public int getid_alumno() {
@@ -73,4 +82,28 @@ public class Alumno {
     public void setDireccion(String direccion) {
         this.direccion = direccion;
     }
+    public double getNotaTrimestre1() {
+        return notaTrimestre1;
+    }
+
+    public void setNotaTrimestre1(double notaTrimestre1) {
+        this.notaTrimestre1 = notaTrimestre1;
+    }
+
+    public double getNotaTrimestre2() {
+        return notaTrimestre2;
+    }
+
+    public void setNotaTrimestre2(double notaTrimestre2) {
+        this.notaTrimestre2 = notaTrimestre2;
+    }
+
+    public double getNotaTrimestre3() {
+        return notaTrimestre3;
+    }
+
+    public void setNotaTrimestre3(double notaTrimestre3) {
+        this.notaTrimestre3 = notaTrimestre3;
+    }
+
 }

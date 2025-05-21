@@ -4,33 +4,44 @@ import java.awt.event.*;
 import java.util.List;
 
 public class Interfaz {
-    private static GestorAlumnos gestor;
+    private static ConexionBBDD conexion;
 
-    public Interfaz() {
-        gestor = new GestorAlumnos(); // Inicializamos el gestor
+    public Interfaz(ConexionBBDD conexion) {
+        this.conexion = conexion;
     }
-    public void iniciar() {
-        crearVentanaLogin();
-    }
+
+    public void iniciar() { crearVentanaLogin(); }
 
     private  void crearVentanaLogin() {
         JFrame loginFrame = new JFrame("Inicio de Sesión");
         loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         loginFrame.setSize(300, 200);
-        loginFrame.setLayout(new GridLayout(3, 2, 10, 10));
+
+        Box contenedor = Box.createVerticalBox();
+
+        Box fila1 = Box.createHorizontalBox();
+        Box fila2 = Box.createHorizontalBox();
+        contenedor.add(fila1);
+        contenedor.add(fila2);
+
+        loginFrame.setLayout(new BorderLayout());
+        loginFrame.add(contenedor, BorderLayout.CENTER);
 
         JLabel usuarioLabel = new JLabel("Usuario:");
         JTextField usuarioField = new JTextField();
+
+        fila1.add(usuarioLabel);
+        fila1.add(usuarioField);
+
         JLabel passwordLabel = new JLabel("Contraseña:");
         JPasswordField passwordField = new JPasswordField();
+
+        fila2.add(passwordLabel);
+        fila2.add(passwordField);
+
         JButton loginButton = new JButton("Iniciar Sesión");
 
-        loginFrame.add(usuarioLabel);
-        loginFrame.add(usuarioField);
-        loginFrame.add(passwordLabel);
-        loginFrame.add(passwordField);
-        loginFrame.add(new JLabel());
-        loginFrame.add(loginButton);
+        contenedor.add(loginButton);
 
         loginButton.addActionListener(e -> {
             String usuario = usuarioField.getText();
@@ -65,17 +76,21 @@ public class Interfaz {
         JButton modificarButton = new JButton("Modificar Alumno");
         JButton eliminarButton = new JButton("Eliminar Alumno");
         JButton listarButton = new JButton("Listar Alumnos");
+        JButton NotasButton = new JButton("Calificaciones");
 
         // Agregamos los action listeners
         agregarButton.addActionListener(e -> mostrarFormularioAgregar());
         modificarButton.addActionListener(e -> mostrarFormularioModificar());
         eliminarButton.addActionListener(e -> mostrarFormularioEliminar());
         listarButton.addActionListener(e -> mostrarListaAlumnos());
+        NotasButton.addActionListener(e -> mostrarGestionCalificaciones());
 
         mainFrame.add(agregarButton);
         mainFrame.add(modificarButton);
         mainFrame.add(eliminarButton);
         mainFrame.add(listarButton);
+        mainFrame.add(NotasButton);
+
 
         mainFrame.setLocationRelativeTo(null);
         mainFrame.setVisible(true);
@@ -124,7 +139,7 @@ public class Interfaz {
                         direccionField.getText()
                 );
 
-                if (gestor.agregarAlumno(alumno)) {
+                if (conexion.agregarAlumno(alumno)) {
                     JOptionPane.showMessageDialog(frame, "Alumno agregado exitosamente");
                     frame.dispose();
                 } else {
@@ -172,7 +187,7 @@ public class Interfaz {
         if (idAlumno != null && !idAlumno.isEmpty()) {
             try {
                 int id = Integer.parseInt(idAlumno);
-                Alumno alumno = gestor.obtenerAlumno(id);
+                Alumno alumno = conexion.obtenerAlumno(id);
                 if (alumno != null) {
                     mostrarFormularioEdicion(id, alumno);
                 } else {
@@ -205,7 +220,7 @@ public class Interfaz {
                     JOptionPane.YES_NO_OPTION);
 
                 if (confirmacion == JOptionPane.YES_OPTION) {
-                    if (gestor.eliminarAlumno(id)) {
+                    if (conexion.eliminarAlumno(id)) {
                         JOptionPane.showMessageDialog(null,
                             "Alumno eliminado exitosamente");
                     } else {
@@ -228,7 +243,7 @@ public class Interfaz {
         JFrame frame = new JFrame("Lista de Alumnos");
         frame.setSize(800, 400);
 
-        List<Alumno> alumnos = gestor.listarAlumnos();
+        List<Alumno> alumnos = conexion.listarAlumnos();
         String[] columnNames = {"ID", "Nombre", "Apellido", "Fecha Nacimiento",
             "Email", "Teléfono", "Dirección"};
         Object[][] data = new Object[alumnos.size()][7];
@@ -292,7 +307,7 @@ public class Interfaz {
                     direccionField.getText()
             );
 
-            if (gestor.modificarAlumno(idAlumno, alumnoModificado)) {
+            if (conexion.modificarAlumno(idAlumno, alumnoModificado)) {
                 JOptionPane.showMessageDialog(frame, "Alumno modificado exitosamente");
                 frame.dispose();
             } else {
@@ -310,6 +325,122 @@ public class Interfaz {
 
         frame.add(formPanel, BorderLayout.CENTER);
         frame.add(buttonPanel, BorderLayout.SOUTH);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    }
+
+    private void mostrarGestionCalificaciones() {
+        JFrame frame = new JFrame("Gestión de Calificaciones");
+        frame.setSize(400, 300);
+        frame.setLayout(new BorderLayout());
+
+        // Panel superior para el selector de alumno
+        JPanel topPanel = new JPanel(new FlowLayout());
+        JLabel idLabel = new JLabel("ID del Alumno:");
+        JTextField idField = new JTextField(10);
+        JButton buscarButton = new JButton("Buscar");
+        topPanel.add(idLabel);
+        topPanel.add(idField);
+        topPanel.add(buscarButton);
+
+        // Panel central para las calificaciones
+        JPanel centerPanel = new JPanel(new GridBagLayout());
+        centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        JTextField nota1Field = new JTextField(10);
+        JTextField nota2Field = new JTextField(10);
+        JTextField nota3Field = new JTextField(10);
+
+        gbc.gridx = 0; gbc.gridy = 0;
+        centerPanel.add(new JLabel("1er Trimestre:"), gbc);
+        gbc.gridx = 1;
+        centerPanel.add(nota1Field, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 1;
+        centerPanel.add(new JLabel("2º Trimestre:"), gbc);
+        gbc.gridx = 1;
+        centerPanel.add(nota2Field, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 2;
+        centerPanel.add(new JLabel("3er Trimestre:"), gbc);
+        gbc.gridx = 1;
+        centerPanel.add(nota3Field, gbc);
+
+        // Panel inferior para botones
+        JPanel bottomPanel = new JPanel();
+        JButton guardarButton = new JButton("Guardar Calificaciones");
+        JButton cancelarButton = new JButton("Cancelar");
+        bottomPanel.add(guardarButton);
+        bottomPanel.add(cancelarButton);
+
+        // Añadir funcionalidad al botón de búsqueda
+        buscarButton.addActionListener(e -> {
+            try {
+                int id = Integer.parseInt(idField.getText());
+                Alumno alumno = conexion.obtenerAlumno(id);
+                if (alumno != null) {
+                    nota1Field.setText(String.valueOf(alumno.getNotaTrimestre1()));
+                    nota2Field.setText(String.valueOf(alumno.getNotaTrimestre2()));
+                    nota3Field.setText(String.valueOf(alumno.getNotaTrimestre3()));
+                } else {
+                    JOptionPane.showMessageDialog(frame,
+                            "No se encontró el alumno con ID: " + id,
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(frame,
+                        "Por favor, ingrese un ID válido",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        // Añadir funcionalidad al botón de guardar
+        guardarButton.addActionListener(e -> {
+            try {
+                int id = Integer.parseInt(idField.getText());
+                double nota1 = Double.parseDouble(nota1Field.getText());
+                double nota2 = Double.parseDouble(nota2Field.getText());
+                double nota3 = Double.parseDouble(nota3Field.getText());
+
+                // Validar notas
+                if (nota1 < 0 || nota1 > 10 || nota2 < 0 || nota2 > 10 || nota3 < 0 || nota3 > 10) {
+                    JOptionPane.showMessageDialog(frame,
+                            "Las notas deben estar entre 0 y 10",
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                // Aquí deberías llamar al método de tu conexión para actualizar las notas
+                if (conexion.actualizarNotas(id, nota1, nota2, nota3)) {
+                    JOptionPane.showMessageDialog(frame,
+                            "Calificaciones guardadas exitosamente");
+                    frame.dispose();
+                } else {
+                    JOptionPane.showMessageDialog(frame,
+                            "Error al guardar las calificaciones",
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(frame,
+                        "Por favor, ingrese valores numéricos válidos",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        cancelarButton.addActionListener(e -> frame.dispose());
+
+        frame.add(topPanel, BorderLayout.NORTH);
+        frame.add(centerPanel, BorderLayout.CENTER);
+        frame.add(bottomPanel, BorderLayout.SOUTH);
+
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }

@@ -8,7 +8,7 @@ public class Main extends JFrame {
             e.printStackTrace();
         }
         // Probar la conexión a la base de datos
-        ConexionBBDD conexion = new ConexionBBDD(null, null, null, null, null);
+        ConexionBBDD conexion = new ConexionBBDD("sql7.freesqldatabase.com", "3306", "sql7779140", "UQp6YIRvGB", "sql7779140");
         if (!conexion.success()) {
             JOptionPane.showMessageDialog(null,
                 "Error al conectar con la base de datos",
@@ -19,8 +19,8 @@ public class Main extends JFrame {
             System.out.println("Conexión exitosa a la base de datos");
             // Iniciar la interfaz en el EDT
             SwingUtilities.invokeLater(() -> {
-                Interfaz interfaz = new Interfaz();
-                interfaz.iniciar();  // Llamar a iniciar() en lugar de setVisible()
+                Interfaz interfaz = new Interfaz(conexion);
+                interfaz.iniciar();
             });
         }
     }
