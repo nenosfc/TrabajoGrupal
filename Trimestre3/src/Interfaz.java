@@ -1,18 +1,22 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Interfaz {
-    private static ConexionBBDD conexion;
+    private final ConexionBBDD conexion;
 
     public Interfaz(ConexionBBDD conexion) {
         this.conexion = conexion;
     }
 
-    public void iniciar() { crearVentanaLogin(); }
+    public void iniciar() {
+        crearVentanaLogin();
 
-    private  void crearVentanaLogin() {
+    }
+
+    private void crearVentanaLogin() {
         JFrame loginFrame = new JFrame("Inicio de Sesión");
         loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         loginFrame.setSize(300, 200);
@@ -52,9 +56,9 @@ public class Interfaz {
                 abrirVentanaPrincipal();
             } else {
                 JOptionPane.showMessageDialog(loginFrame,
-                    "Usuario o contraseña incorrectos",
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE);
+                        "Usuario o contraseña incorrectos",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
             }
         });
 
@@ -62,11 +66,11 @@ public class Interfaz {
         loginFrame.setVisible(true);
     }
 
-    private  boolean verificarCredenciales(String usuario, String password) {
+    private boolean verificarCredenciales(String usuario, String password) {
         return usuario.equals("Antonio") && password.equals("EclipseJava");
     }
 
-    private  void abrirVentanaPrincipal() {
+    private void abrirVentanaPrincipal() {
         JFrame mainFrame = new JFrame("Gestión de Alumnos");
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setSize(400, 200);
@@ -96,7 +100,7 @@ public class Interfaz {
         mainFrame.setVisible(true);
     }
 
-    private  void mostrarFormularioAgregar() {
+    private void mostrarFormularioAgregar() {
         JFrame frame = new JFrame("Agregar Alumno");
         frame.setSize(500, 400);
         frame.setLayout(new BorderLayout());
@@ -168,8 +172,8 @@ public class Interfaz {
         frame.setVisible(true);
     }
 
-    private  void addFormField(JPanel panel, String labelText,
-                                   JTextField field, GridBagConstraints gbc, int y) {
+    private void addFormField(JPanel panel, String labelText,
+                              JTextField field, GridBagConstraints gbc, int y) {
         gbc.gridx = 0;
         gbc.gridy = y;
         panel.add(new JLabel(labelText), gbc);
@@ -178,11 +182,11 @@ public class Interfaz {
         panel.add(field, gbc);
     }
 
-    private  void mostrarFormularioModificar() {
+    private void mostrarFormularioModificar() {
         String idAlumno = JOptionPane.showInputDialog(null,
-            "Ingrese el ID del alumno a modificar:",
-            "Modificar Alumno",
-            JOptionPane.QUESTION_MESSAGE);
+                "Ingrese el ID del alumno a modificar:",
+                "Modificar Alumno",
+                JOptionPane.QUESTION_MESSAGE);
 
         if (idAlumno != null && !idAlumno.isEmpty()) {
             try {
@@ -192,60 +196,60 @@ public class Interfaz {
                     mostrarFormularioEdicion(id, alumno);
                 } else {
                     JOptionPane.showMessageDialog(null,
-                        "No se encontró el alumno con ID: " + id,
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE);
+                            "No se encontró el alumno con ID: " + id,
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
                 }
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(null,
-                    "ID inválido",
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE);
+                        "ID inválido",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
             }
         }
     }
 
-    private  void mostrarFormularioEliminar() {
+    private void mostrarFormularioEliminar() {
         String idAlumno = JOptionPane.showInputDialog(null,
-            "Ingrese el ID del alumno a eliminar:",
-            "Eliminar Alumno",
-            JOptionPane.QUESTION_MESSAGE);
+                "Ingrese el ID del alumno a eliminar:",
+                "Eliminar Alumno",
+                JOptionPane.QUESTION_MESSAGE);
 
         if (idAlumno != null && !idAlumno.isEmpty()) {
             try {
                 int id = Integer.parseInt(idAlumno);
                 int confirmacion = JOptionPane.showConfirmDialog(null,
-                    "¿Está seguro de eliminar el alumno?",
-                    "Confirmar eliminación",
-                    JOptionPane.YES_NO_OPTION);
+                        "¿Está seguro de eliminar el alumno?",
+                        "Confirmar eliminación",
+                        JOptionPane.YES_NO_OPTION);
 
                 if (confirmacion == JOptionPane.YES_OPTION) {
                     if (conexion.eliminarAlumno(id)) {
                         JOptionPane.showMessageDialog(null,
-                            "Alumno eliminado exitosamente");
+                                "Alumno eliminado exitosamente");
                     } else {
                         JOptionPane.showMessageDialog(null,
-                            "Error al eliminar alumno",
-                            "Error",
-                            JOptionPane.ERROR_MESSAGE);
+                                "Error al eliminar alumno",
+                                "Error",
+                                JOptionPane.ERROR_MESSAGE);
                     }
                 }
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(null,
-                    "ID inválido",
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE);
+                        "ID inválido",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
             }
         }
     }
 
-    private  void mostrarListaAlumnos() {
+    private void mostrarListaAlumnos() {
         JFrame frame = new JFrame("Lista de Alumnos");
         frame.setSize(800, 400);
 
         List<Alumno> alumnos = conexion.listarAlumnos();
         String[] columnNames = {"ID", "Nombre", "Apellido", "Fecha Nacimiento",
-            "Email", "Teléfono", "Dirección"};
+                "Email", "Teléfono", "Dirección"};
         Object[][] data = new Object[alumnos.size()][7];
 
         for (int i = 0; i < alumnos.size(); i++) {
@@ -266,6 +270,7 @@ public class Interfaz {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
+
     private void mostrarFormularioEdicion(int idAlumno, Alumno alumno) {
         JFrame frame = new JFrame("Modificar Alumno");
         frame.setSize(500, 400);
@@ -330,119 +335,95 @@ public class Interfaz {
     }
 
     private void mostrarGestionCalificaciones() {
-        JFrame frame = new JFrame("Gestión de Calificaciones");
+        JFrame frame = new JFrame("Gestión");
         frame.setSize(400, 300);
-        frame.setLayout(new BorderLayout());
-
-        // Panel superior para el selector de alumno
-        JPanel topPanel = new JPanel(new FlowLayout());
-        JLabel idLabel = new JLabel("ID del Alumno:");
-        JTextField idField = new JTextField(10);
-        JButton buscarButton = new JButton("Buscar");
-        topPanel.add(idLabel);
-        topPanel.add(idField);
-        topPanel.add(buscarButton);
-
-        // Panel central para las calificaciones
-        JPanel centerPanel = new JPanel(new GridBagLayout());
-        centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        frame.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        JTextField nota1Field = new JTextField(10);
-        JTextField nota2Field = new JTextField(10);
-        JTextField nota3Field = new JTextField(10);
+        JTextField idAlumnoField = new JTextField(20);
+        JTextField idAsignaturaField = new JTextField(20);
+        JTextField nota1Field = new JTextField(20);
+        JTextField nota2Field = new JTextField(20);
+        JTextField nota3Field = new JTextField(20);
+        JTextField[] fields = {idAlumnoField, idAsignaturaField, nota1Field, nota2Field, nota3Field};
+        String[] labels = {"ID Alumno:", "ID Asignatura:", "1er Trimestre:", "2do Trimestre:", "3er Trimestre:"};
 
-        gbc.gridx = 0; gbc.gridy = 0;
-        centerPanel.add(new JLabel("1er Trimestre:"), gbc);
-        gbc.gridx = 1;
-        centerPanel.add(nota1Field, gbc);
+        for (int i = 0; i < 5; i++) {
+            gbc.gridx = 0;
+            gbc.gridy = i;
+            frame.add(new JLabel(labels[i]), gbc);
 
-        gbc.gridx = 0; gbc.gridy = 1;
-        centerPanel.add(new JLabel("2º Trimestre:"), gbc);
-        gbc.gridx = 1;
-        centerPanel.add(nota2Field, gbc);
+            gbc.gridx = 1;
+            frame.add(fields[i], gbc);
+        }
 
-        gbc.gridx = 0; gbc.gridy = 2;
-        centerPanel.add(new JLabel("3er Trimestre:"), gbc);
-        gbc.gridx = 1;
-        centerPanel.add(nota3Field, gbc);
+        JButton submitButton = new JButton("Guardar Calificaciones");
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        gbc.gridwidth = 2;
 
-        // Panel inferior para botones
-        JPanel bottomPanel = new JPanel();
-        JButton guardarButton = new JButton("Guardar Calificaciones");
-        JButton cancelarButton = new JButton("Cancelar");
-        bottomPanel.add(guardarButton);
-        bottomPanel.add(cancelarButton);
-
-        // Añadir funcionalidad al botón de búsqueda
-        buscarButton.addActionListener(e -> {
+        submitButton.addActionListener(e -> {
             try {
-                int id = Integer.parseInt(idField.getText());
-                Alumno alumno = conexion.obtenerAlumno(id);
-                if (alumno != null) {
-                    nota1Field.setText(String.valueOf(alumno.getNotaTrimestre1()));
-                    nota2Field.setText(String.valueOf(alumno.getNotaTrimestre2()));
-                    nota3Field.setText(String.valueOf(alumno.getNotaTrimestre3()));
-                } else {
-                    JOptionPane.showMessageDialog(frame,
-                            "No se encontró el alumno con ID: " + id,
-                            "Error",
-                            JOptionPane.ERROR_MESSAGE);
-                }
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(frame,
-                        "Por favor, ingrese un ID válido",
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE);
-            }
-        });
-
-        // Añadir funcionalidad al botón de guardar
-        guardarButton.addActionListener(e -> {
-            try {
-                int id = Integer.parseInt(idField.getText());
+                int idAlumno = Integer.parseInt(idAlumnoField.getText());
+                int idAsignatura = Integer.parseInt(idAsignaturaField.getText());
                 double nota1 = Double.parseDouble(nota1Field.getText());
-                double nota2 = Double.parseDouble(nota2Field.getText());
+                double nota2  = Double.parseDouble(nota2Field.getText());
                 double nota3 = Double.parseDouble(nota3Field.getText());
 
-                // Validar notas
-                if (nota1 < 0 || nota1 > 10 || nota2 < 0 || nota2 > 10 || nota3 < 0 || nota3 > 10) {
-                    JOptionPane.showMessageDialog(frame,
-                            "Las notas deben estar entre 0 y 10",
-                            "Error",
-                            JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-
-                // Aquí deberías llamar al método de tu conexión para actualizar las notas
-                if (conexion.actualizarNotas(id, nota1, nota2, nota3)) {
-                    JOptionPane.showMessageDialog(frame,
-                            "Calificaciones guardadas exitosamente");
+                boolean success = this.conexion.actualizarNotas(idAlumno, idAsignatura, nota1, nota2, nota3);
+                if (success) {
+                    JOptionPane.showMessageDialog(frame, "Calificaciones guardadas exitosamente");
                     frame.dispose();
                 } else {
-                    JOptionPane.showMessageDialog(frame,
-                            "Error al guardar las calificaciones",
-                            "Error",
-                            JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(frame, "Error al guardar las calificaciones", "Error", JOptionPane.ERROR_MESSAGE);
                 }
-            } catch (NumberFormatException ex) {
+            } catch (NumberFormatException ignore) {
+                System.out.println(ignore);
                 JOptionPane.showMessageDialog(frame,
-                        "Por favor, ingrese valores numéricos válidos",
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE);
+                    "Por favor, ingrese valores numéricos válidos",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
             }
         });
 
-        cancelarButton.addActionListener(e -> frame.dispose());
-
-        frame.add(topPanel, BorderLayout.NORTH);
-        frame.add(centerPanel, BorderLayout.CENTER);
-        frame.add(bottomPanel, BorderLayout.SOUTH);
+        frame.add(submitButton, gbc);
 
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
 
-}
+    private void mostrarListaCalificacionesAlumnos() {
+        JFrame frame = new JFrame("Mostrar Calificaciones");
+        frame.setSize(800, 400);
+
+        List<Calificaciones> calificaciones = conexion.listarCalificacionesAlumnos();
+        String[] columnNames = { "Nombre", "Apellido","ID_Alumno", "Asignatura",
+                "Id_Asignatura", "Nota Trimestre 1","Nota Trimestre 2","Nota Trimestre 3","Nota Final"};
+        Object[][] data = new Object[calificaciones.size()][7];
+
+        int i = 0;
+        for (Calificaciones calificaciones : calificaciones) {
+            data[i][0] = ();
+            data[i][1] = ();
+            data[i][2] = ();
+            data[i][3] = ();
+            data[i][4] = ();
+            data[i][5] = ();
+            data[i][6] = ();
+            i++;
+        }
+
+
+        JTable table = new JTable(data, columnNames);
+        JScrollPane scrollPane = new JScrollPane(table);
+        frame.add(scrollPane);
+
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    }
+    }
+
+
+

@@ -1,9 +1,7 @@
 
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class ConexionBBDD {
         private Connection conexion;
@@ -127,21 +125,121 @@ public class ConexionBBDD {
             }
         }
 
-    public boolean actualizarNotas(int idAlumno, double nota1, double nota2, double nota3) {
-        String sql = "UPDATE alumnos SET NotaTrimestre1 = ?, NotaTrimestre2 = ?, NotaTrimestre3 = ? WHERE id_alumno = ?";
+    public boolean insertarNotas(int id_alumno, int id_asignaturas, double nota1, double nota2, double nota3) {
+        String sql = """
+            INSERT INTO calificaciones 
+            (id_alumno, id_asignaturas, notaTrimestre1, notaTrimestre2, notaTrimestre3) 
+            VALUES (?, ?, ?, ?, ?)
+            """;
+
+        try (PreparedStatement pstmt = conexion.prepareStatement(sql)) {
+            pstmt.setInt(1, id_alumno);
+            pstmt.setInt(2, id_asignaturas);
+            pstmt.setDouble(3, nota1);
+            pstmt.setDouble(4, nota2);
+            pstmt.setDouble(5, nota3);
+
+            int filasActualizadas = pstmt.executeUpdate();
+            if (!(filasActualizadas > 0)) return insertarNotas(id_alumno, id_asignaturas, nota1, nota2, nota3);
+            return true;
+        } catch (SQLException e) {
+            System.out.println("Error al actualizar las notas: " + e.getMessage());
+        }
+        return false;
+    }
+
+    public boolean actualizarNotas(int id_alumno, int id_asignaturas, double nota1, double nota2, double nota3) {
+        String sql = "UPDATE calificaciones SET notaTrimestre1 = ?, notaTrimestre2 = ?, notaTrimestre3 = ? WHERE id_alumno = ? AND id_asignaturas = ?";
 
         try (PreparedStatement pstmt = conexion.prepareStatement(sql)) {
             pstmt.setDouble(1, nota1);
             pstmt.setDouble(2, nota2);
             pstmt.setDouble(3, nota3);
-            pstmt.setInt(4, idAlumno);
+            pstmt.setInt(4, id_alumno);
+            pstmt.setInt(5, id_asignaturas);
 
             int filasActualizadas = pstmt.executeUpdate();
-            return filasActualizadas > 0;
+            if (!(filasActualizadas > 0)) return insertarNotas(id_alumno, id_asignaturas, nota1, nota2, nota3);
+            return true;
         } catch (SQLException e) {
             System.out.println("Error al actualizar las notas: " + e.getMessage());
-            return false;
         }
+        return false;
+    }
+
+    public Calificaciones getCalificaciones(int id_alumno, int id_asignatura) {
+
+        Calificaciones calificaciones = null;
+
+        if (conexion == null) {
+
+            System.out.println("conexion");
+            return calificaciones;
+        }
+
+        String sql = "SELECT * FROM calificaciones WHERE id_alumno = ? AND id_asignaturas = ?";
+
+        try (PreparedStatement pstmt = conexion.prepareStatement(sql)) {
+            pstmt.setInt(1, id_alumno);
+            pstmt.setInt(2, id_asignatura);
+            ResultSet rs = pstmt.executeQuery();
+            System.out.println("try");
+            if (rs.next()) {
+                System.out.println("if");
+
+                calificaciones = new Calificaciones(
+                        rs.getInt("id_alumno"),
+                        rs.getInt("id_asignaturas"),
+                        rs.getDouble("NotaTrimestre1"),
+                        rs.getDouble("NotaTrimestre2"),
+                        rs.getDouble("NotaTrimestre3")
+                );
+            }
+        } catch (SQLException e) {
+            System.out.println("catch");
+
+            System.out.println("Error al obtener calificaciones: " + e.getMessage());
+        }
+
+        return calificaciones;
+
+
+    }
+
+    public LinkedList<Map<String, Object>> obtenerCalificacionesCompletas() {
+        LinkedList<Map<String, Object>> calificacionesLista = new LinkedList<>();
+
+        String sql = """
+            SELECT a.nombre, a.apellido, a.id_alumno, 
+                   asig.nombre AS asignatura, asig.id_asignatura,
+                   c.NotaTrimestre1, c.NotaTrimestre2, c.NotaTrimestre3, c.NotaFinal
+            FROM calificaciones c
+            JOIN alumnos a ON c.id_alumno = a.id_alumno
+            JOIN asignaturas asig ON c.id_asignaturas = asig.id_asignatura
+            ORDER BY a.apellido, a.nombre, asig.nombre
+            """;
+
+        try (PreparedStatement pstmt = conexion.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                Map<String, Object> fila = new HashMap<>();
+                fila.put("nombre", rs.getString("nombre"));
+                fila.put("apellido", rs.getString("apellido"));
+                fila.put("id_alumno", rs.getInt("id_alumno"));
+                fila.put("asignatura", rs.getString("asignatura"));
+                fila.put("id_asignatura", rs.getInt("id_asignatura"));
+                fila.put("nota1", rs.getDouble("NotaTrimestre1"));
+                fila.put("nota2", rs.getDouble("NotaTrimestre2"));
+                fila.put("nota3", rs.getDouble("NotaTrimestre3"));
+                fila.put("notaFinal", rs.getDouble("NotaFinal"));
+                calificacionesLista.add(fila);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al obtener calificaciones: " + e.getMessage());
+        }
+
+        return calificacionesLista;
     }
 
 }
