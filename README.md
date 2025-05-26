@@ -47,7 +47,28 @@ Ahora añadiré diferentes capturas con las distintas secciones
 ### Listar Notas
 ![Image](https://github.com/user-attachments/assets/7b7216c0-9c1d-4064-bcb3-66b9ce91b4a9)
 
+---
+
 ## 🔗 Repositorio
 
 En el siguiente enlace encontrarás todo el proyecto:  
 [📁 GitHub - Aula Virtual(https://github.com/nenosfc/TrabajoGrupal)  
+
+---
+
+## ⚙️ Tecnologías usadas
+
+- **Lenguaje:** Java (Swing)
+- **Base de datos:** MySQL + JDBC
+- **Control de versiones:** Git + GitHub
+
+---
+
+## 📊 Diagramas del proyecto
+
+- **Base de datos**
+![BBDD](https://github.com/user-attachments/assets/abe7d7ef-ff41-4588-961c-08143ec36ef1)
+- **Flujo de la aplicación** 
+![FLUJO](https://github.com/user-attachments/assets/7b08b290-ea5a-438f-abde-de92225399bc)
+
+---
