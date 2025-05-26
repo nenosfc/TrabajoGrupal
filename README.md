@@ -67,8 +67,11 @@ En el siguiente enlace encontrarás todo el proyecto:
 ## 📊 Diagramas del proyecto
 
 - **Base de datos**
+  
 ![BBDD](https://github.com/user-attachments/assets/abe7d7ef-ff41-4588-961c-08143ec36ef1)
-- **Flujo de la aplicación** 
+
+- **Flujo de la aplicación**
+   
 ![FLUJO](https://github.com/user-attachments/assets/7b08b290-ea5a-438f-abde-de92225399bc)
 
 ---
