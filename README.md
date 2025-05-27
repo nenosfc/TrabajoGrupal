@@ -4,12 +4,12 @@
 La aplicación que hemos desarrollado está basada en las acciones que se pueden realizar en un Aula Virtual.
 Dentro de la aplicación se pueden desarrollar diferentes secciones:
 
-  -Agregar un alumno nuevo.
-  -Modificar los datos de algún alumno.
-  -Eliminar si fuera necesario al alumno
-  -Listar a todos los alumnos con sus datos.
-  -Agregarle notas de los diferentes trimestres a las diferentes asignaturas.
-  -Listar los nombres de los alumnos junto a sus calificaciones.
+  - Agregar un alumno nuevo.
+  - Modificar los datos de algún alumno.
+  - Eliminar si fuera necesario al alumno
+  - Listar a todos los alumnos con sus datos.
+  - Agregarle notas de los diferentes trimestres a las diferentes asignaturas.
+  - Listar los nombres de los alumnos junto a sus calificaciones.
   
 ---
 
